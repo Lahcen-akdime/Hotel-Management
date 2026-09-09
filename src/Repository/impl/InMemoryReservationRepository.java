@@ -8,16 +8,16 @@ import java.util.*;
 
 public class InMemoryReservationRepository implements ReservationRepository {
 
-    private Map<UUID, Integer> reservations = new HashMap<>() ; ;
+    private Map<UUID, Reservation> reservations = new HashMap<>() ; ;
 
     @Override
     public void save(Reservation reservation) {
-
+        reservations.put(UUID.randomUUID(),reservation) ;
     }
 
     @Override
     public Optional<Reservation> findById(UUID id) {
-        return Optional.empty();
+        return Optional.of(reservations.get(id)) ;
     }
 
     @Override
@@ -27,16 +27,15 @@ public class InMemoryReservationRepository implements ReservationRepository {
 
     @Override
     public List<Reservation> findByUserId(UUID userId) {
-        return List.of();
-    }
-
-    @Override
-    public List<Reservation> findByRoomNumber(String roomNumber) {
-        return List.of();
+        return reservations.entrySet().stream()
+                                    .map(r->r.getValue())
+                                    .filter(r->r.getUserId().equals(userId))
+                                    .toList();
     }
 
     @Override
     public List<Reservation> findAll() {
-        return List.of();
+        return reservations.entrySet().stream().map(r->r.getValue()).toList();
     }
+
 }

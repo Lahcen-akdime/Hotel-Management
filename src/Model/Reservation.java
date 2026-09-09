@@ -1,5 +1,7 @@
 package Model;
 
+import Enums.ReservationStatus;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,7 +12,7 @@ public class Reservation {
     private String reservationCode ;
 
     private UUID userId ;
-    private String roomNumber ;
+    private Integer roomNumber ;
 
     private LocalDate checkin ;
     private LocalDate checkout ;
@@ -23,7 +25,7 @@ public class Reservation {
     private ReservationStatus reservationStatus ;
     private LocalDateTime cretedAt ;
 
-    public Reservation(String roomNumber, LocalDate checkin, LocalDate checkout, int numberOfGuests, Long numberOfNights, BigDecimal totalPrice ) {
+    public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout, int numberOfGuests, Long numberOfNights, BigDecimal totalPrice ) {
         this.roomNumber = roomNumber;
         this.checkin = checkin;
         this.checkout = checkout;
@@ -49,7 +51,7 @@ public class Reservation {
         return userId;
     }
 
-    public String getRoomNumber() {
+    public Integer getRoomNumber() {
         return roomNumber;
     }
 

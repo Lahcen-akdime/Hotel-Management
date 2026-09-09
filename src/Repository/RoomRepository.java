@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface RoomRepository {
 
     void save(Integer roomNumber , Room room);
-    Optional<Room> findByRoomNumber(String roomNumber) ;
-    List<Room> findAll();
+    Optional<Room> findByRoomNumber(Integer roomNumber) ;
+    List<Room> getAll();
+    List<Room> getAvailbleRooms() ;
 }

@@ -10,6 +10,9 @@ public class InMemoryUserRepository implements UserRepository {
 
     private Map<UUID, User> users = new HashMap<>() ;
 
+    {
+        users.put(UUID.randomUUID(),new User("lahcen","lahcen@gmail.com","lahcen","lahcenlahcen"));
+    }
 
     public void save(User user){
         users.put(user.getId(),user) ;
@@ -20,26 +23,21 @@ public class InMemoryUserRepository implements UserRepository {
         return true ;
     }
 
-
     public Optional<User> findById(UUID id) {
         return Optional.of(users.get(id)) ;
     }
-
 
     public Optional<User> findByEmail(String email) {
         return users.entrySet().stream().map(user->user.getValue()).filter(user -> user.getEmail().equalsIgnoreCase(email)).findFirst();
     }
 
-
     public boolean existsByEmail(String email) {
-        return false;
+        return users.entrySet().stream().map(user -> user.getValue()).filter(user->user.getEmail().equalsIgnoreCase(email)).findAny().isPresent();
     }
-
 
     public List<User> findAll() {
         return List.of();
     }
-
 
     public User editProfile(User user,String newFullName,String newPhone,String newPassword,String newEmail){
         User Storeduser = users.get(user.getId());
@@ -55,4 +53,9 @@ public class InMemoryUserRepository implements UserRepository {
         Storeduser.setPassword(newPassword);
         return Storeduser ;
     }
+
+    public Boolean isPasswordOfEmail(String email , String password){
+        return findByEmail(email).get().getPassword().equals(password) ;
+    }
+
 }

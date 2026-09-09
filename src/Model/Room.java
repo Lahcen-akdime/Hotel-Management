@@ -1,5 +1,9 @@
 package Model;
 
+import Enums.RoomStatus;
+import Enums.RoomType;
+import Util.CalculationUtils;
+
 import java.math.BigDecimal;
 
 public class Room {
@@ -7,18 +11,12 @@ public class Room {
     private RoomType type ;
     private int capacite ;
     private BigDecimal pricePerNight ;
-    private RoomStatus roomStatus = RoomStatus.AVAILABLE ;
+    private RoomStatus roomStatus ;
 
-    public Room(Integer roomNumber, RoomType type, int capacite, BigDecimal pricePerNight) {
-        if(pricePerNight.compareTo(BigDecimal.ZERO) == 0){
-            throw new IllegalArgumentException("The price per night "+pricePerNight+" is negatif !");
-        }
-        if(capacite < 0){
-            throw new IllegalArgumentException("The capacite "+capacite+" not acceptable !");
-        }
+    public Room(Integer roomNumber, RoomType type, int capacite, BigDecimal pricePerNight,RoomStatus roomStatus) {
         this.roomNumber = roomNumber;
         this.type = type;
-        this.capacite = capacite;
+        this.capacite = CalculationUtils.CapaciteValueFromRoomType(type);
         this.pricePerNight = pricePerNight;
         this.roomStatus = roomStatus;
     }
