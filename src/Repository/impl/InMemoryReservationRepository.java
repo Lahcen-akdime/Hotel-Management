@@ -1,10 +1,13 @@
 package Repository.impl;
 
+import Enums.ReservationStatus;
 import Model.Reservation;
+import Model.Room;
 import Model.User;
 import Repository.ReservationRepository;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class InMemoryReservationRepository implements ReservationRepository {
 
@@ -22,7 +25,7 @@ public class InMemoryReservationRepository implements ReservationRepository {
 
     @Override
     public Optional<Reservation> findByCode(String code) {
-        return Optional.empty();
+        return reservations.values().stream().filter(r->r.getReservationCode().equals(code)).findFirst();
     }
 
     @Override
@@ -38,4 +41,14 @@ public class InMemoryReservationRepository implements ReservationRepository {
         return reservations.entrySet().stream().map(r->r.getValue()).toList();
     }
 
+    public List<Reservation> getConfirmedReservationsOfRoom(Room room){
+        List<Reservation> reservationList = reservations.entrySet().stream().map(r -> r.getValue())
+                .filter(r -> r.getRoomNumber().equals(room.getRoomNumber()))
+                .filter(reservation -> reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)).toList();
+        return reservationList ;
+    }
+
+    public Optional<Reservation> getReservationByNumber(String reservationNumber){
+        return reservations.values().stream().filter(r->r.getReservationCode().equals(reservationNumber)).findFirst();
+    }
 }

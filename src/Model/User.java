@@ -57,7 +57,7 @@ public class User {
     @Override
     public String toString() {
         StringBuilder userNameAndEmail = new StringBuilder();
-        userNameAndEmail.append("[user] fullName : "+fullName+", email : "+email) ;
+        userNameAndEmail.append("[user] fullName : "+fullName+", email : "+email+" , id : "+id) ;
         return userNameAndEmail.toString();
     }
 }

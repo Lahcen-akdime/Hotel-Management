@@ -1,7 +1,13 @@
 package Util;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import Exception.InvalidReservationDateException ;
+import Model.Reservation;
 
 public class DateUtils {
 
@@ -29,4 +35,29 @@ public class DateUtils {
             throw new InvalidReservationDateException("La date checkout doit etre pas le meme que checkin ! ");
         }
     }
+
+    public static void isRoomEmptyInReservationDate(LocalDate checkin , LocalDate checkout , List<Reservation> reservations){
+        //----------------------//
+        String message = "Pardon mais la chambre et deja réserver en ce temp" ;
+        reservations.stream().forEach(reservation -> {
+            LocalDate checkenOfPreviusReservation = reservation.getCheckin() ;
+            LocalDate checkoutOfPreviusReservation = reservation.getCheckout() ;
+            if(checkenOfPreviusReservation.isEqual(checkin)){
+                throw new DateTimeException(message) ;
+            } else if (checkoutOfPreviusReservation.isEqual(checkout)) {
+                throw new DateTimeException(message) ;
+            } else if (checkin.isAfter(checkenOfPreviusReservation) && checkin.isBefore(checkoutOfPreviusReservation)) {
+                throw new DateTimeException(message) ;
+            } else if (checkout.isAfter(checkenOfPreviusReservation) && checkout.isBefore(checkoutOfPreviusReservation)) {
+                throw new DateTimeException(message) ;
+            } else if (checkin.isBefore(checkenOfPreviusReservation) && checkout.isAfter(checkoutOfPreviusReservation)) {
+                throw new DateTimeException(message) ;
+            } else if (checkin.isBefore(checkenOfPreviusReservation) && checkout.isAfter(checkenOfPreviusReservation)) {
+                throw new DateTimeException(message) ;
+            } else if (checkin.isBefore(checkoutOfPreviusReservation) && checkout.isAfter(checkoutOfPreviusReservation)) {
+                throw new DateTimeException(message) ;
+            }
+        });
+    }
+
 }

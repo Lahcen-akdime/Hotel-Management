@@ -12,7 +12,7 @@ import java.util.UUID;
 public class AuthService {
 
     private static User currentUser ;
-    private InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository() ;
+    private static InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository() ;
 
     public User inscreption(String email , String fullName,String phone,String password){
         ValidationUtils.EmailValidator(email);
@@ -52,6 +52,11 @@ public class AuthService {
     public Optional<User> findByEmail(String email){
         return inMemoryUserRepository.findByEmail(email) ;
     }
+
+    public Optional<User> findByUserId(UUID id){
+        return inMemoryUserRepository.findById(id) ;
+    }
+
 
     public static User getCurrentUser(){
         return currentUser ;

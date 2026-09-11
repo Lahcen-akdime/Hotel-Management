@@ -36,12 +36,10 @@ public class RoomService {
         });
     }
 
-    public void CreateReservation(){
-
-    }
-
     public Optional<Room> findRoomByNumber(Integer roomNumber){
         return inMemoryRoomRepository.findByRoomNumber(roomNumber) ;
     }
+
+
 
 }

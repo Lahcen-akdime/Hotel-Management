@@ -9,9 +9,12 @@ import Util.MoneyUtils;
 import Util.ValidationUtils;
 
 import java.math.BigDecimal;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import Exception.InvalidReservationDateException ;
 import Exception.InvalidReservationException ;
@@ -19,7 +22,8 @@ import Exception.InvalidReservationException ;
 public class ReservationService {
 
     private static RoomService roomService = new RoomService() ;
-    private InMemoryReservationRepository inMemoryReservationRepository = new InMemoryReservationRepository() ;
+    private static AuthService authService = new AuthService() ;
+    private static InMemoryReservationRepository inMemoryReservationRepository = new InMemoryReservationRepository() ;
 
     public void createReservation(Integer roomNumber, String checkin, String checkout, int numberOfGuests, Long numberOfNights){
 
@@ -32,14 +36,17 @@ public class ReservationService {
         DateUtils.ValidateChekinCheckoutDates(chekinDate,chekoutDate);
         // get room
         Optional<Room> room = roomService.findRoomByNumber(roomNumber) ;
+        // verifier que la chambre pas reservé au meme temp
+        List<Reservation> reservations = inMemoryReservationRepository.getConfirmedReservationsOfRoom(room.get()) ;
+        DateUtils.isRoomEmptyInReservationDate(chekinDate,chekoutDate,reservations) ;
         // verify capacite
         ValidationUtils.TheCapaciteOfRoomIsPossible(numberOfGuests,room.get());
         // calculate total price
         BigDecimal totalPrice = MoneyUtils.totalPrice(room.get().getPricePerNight(),numberOfNights) ;
         // create + save the reservation
-        Reservation reservation = new Reservation(roomNumber,chekinDate,chekoutDate,numberOfGuests,numberOfNights,totalPrice);
+        Reservation reservation = new Reservation(roomNumber,chekinDate,chekoutDate,numberOfGuests,numberOfNights,totalPrice, AuthService.getCurrentUser().getId());
         inMemoryReservationRepository.save(reservation);
-            System.out.println(inMemoryReservationRepository.toString());
+            System.out.println(inMemoryReservationRepository.findAll().toString());
         } catch (InvalidReservationDateException e) {
             System.out.println(e.getMessage());
         }
@@ -47,6 +54,8 @@ public class ReservationService {
             System.out.println(e.getMessage());
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date ( la date doit respecter cette format : 2026-09-03 )");
+        } catch (DateTimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -54,13 +63,37 @@ public class ReservationService {
             System.out.println("======= Your reservations =======");
          inMemoryReservationRepository.findByUserId(AuthService.getCurrentUser().getId()).stream()
                 .forEach(reservation -> {
-            System.out.println("=================================");
+            if(AuthService.getCurrentUser().getId() == reservation.getUserId()){
+            System.out.println("========================================");
+            System.out.println("Reservation code : "+reservation.getReservationCode());
             System.out.println("checkin : "+reservation.getCheckin());
             System.out.println("checkout : "+reservation.getCheckout());
             System.out.println("number of guests : "+reservation.getNumberOfGuests());
-            System.out.println("reservation code : "+reservation.getReservationCode());
             System.out.println("price total : "+reservation.getTotalPrice());
             System.out.println("reservation status : "+reservation.getReservationStatus());
+            System.out.println("for user : "+authService.findByUserId(reservation.getUserId()).get().getFullName());
+            }
         });
+    }
+
+    public void getReservationByNumber(String reservationNumber){
+        System.out.println("========= Your reservation =========");
+        Reservation reservation = inMemoryReservationRepository.getReservationByNumber(reservationNumber).get() ;
+        System.out.println("Reservation code : "+reservation.getReservationCode());
+        System.out.println("checkin : "+reservation.getCheckin());
+        System.out.println("checkout : "+reservation.getCheckout());
+        System.out.println("number of guests : "+reservation.getNumberOfGuests());
+        System.out.println("price total : "+reservation.getTotalPrice());
+        System.out.println("reservation status : "+reservation.getReservationStatus());
+        System.out.println("for user : "+authService.findByUserId(reservation.getUserId()).get().getFullName());
+    }
+
+    public Optional<Reservation> getResevationByCode(String code){
+        return inMemoryReservationRepository.findByCode(code) ;
+    }
+
+    public void cancelReservation(String code){
+
+        getResevationByCode(code) ;
     }
 }

@@ -8,19 +8,15 @@ import java.util.stream.Collectors;
 
 public class InMemoryUserRepository implements UserRepository {
 
-    private Map<UUID, User> users = new HashMap<>() ;
+    private static Map<UUID, User> users = new HashMap<>() ;
 
     {
-        users.put(UUID.randomUUID(),new User("lahcen","lahcen@gmail.com","lahcen","lahcenlahcen"));
+        User user = new User("lahcen","lahcen@gmail.com","lahcen","lahcenlahcen");
+        users.put(user.getId(),user);
     }
 
     public void save(User user){
         users.put(user.getId(),user) ;
-    }
-
-    public Boolean findEmail(String email){
-        users.entrySet().stream() ;
-        return true ;
     }
 
     public Optional<User> findById(UUID id) {

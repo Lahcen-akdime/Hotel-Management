@@ -25,14 +25,14 @@ public class Reservation {
     private ReservationStatus reservationStatus ;
     private LocalDateTime cretedAt ;
 
-    public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout, int numberOfGuests, Long numberOfNights, BigDecimal totalPrice ) {
+    public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout, int numberOfGuests, Long numberOfNights, BigDecimal totalPrice , UUID userId ) {
         this.roomNumber = roomNumber;
         this.checkin = checkin;
         this.checkout = checkout;
         this.numberOfGuests = numberOfGuests;
         this.numberOfNights = numberOfNights;
         this.totalPrice = totalPrice;
-        this.userId = UUID.randomUUID();
+        this.userId = userId ;
 
         this.reservationCode = "R-"+roomNumber+checkin;
         this.reservationStatus = ReservationStatus.CONFIRMED ;
@@ -89,7 +89,7 @@ public class Reservation {
 
     @Override
     public String toString() {
-        StringBuilder reservationInfo = new StringBuilder("[reservation] roomNumber : "+roomNumber+" , reservation code : "+reservationCode+" , reservation Status : "+reservationStatus.toString()) ;
+        StringBuilder reservationInfo = new StringBuilder("[reservation] roomNumber : "+roomNumber+" , reservation code : "+reservationCode+" , reservation Status : "+reservationStatus.toString()+" , user id : "+userId) ;
         return reservationInfo.toString() ;
     }
 }

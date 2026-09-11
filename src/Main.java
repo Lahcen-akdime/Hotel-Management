@@ -8,6 +8,8 @@ import Service.RoomService;
 import Util.InputUtils;
 import Exception.InvalidCredentialsException ;
 
+import java.time.LocalDate;
+
 public class Main {
 
     private static AuthService authService = new AuthService() ;
@@ -30,13 +32,11 @@ public class Main {
                     break;
                 case 2 : loginForm();
                     break;
-                case 3 :
-                    System.out.println("Au revoir !!");
-                    continuer = false ;
-                    break;
+                case 3 : System.out.println("Au revoir !!");
+                    continuer = false;
+                    return;
                 default:
                     System.out.println("choix invalide ! ");
-                    continuer = false ;
             }
         }
     }
@@ -58,6 +58,7 @@ public class Main {
             System.out.println("8 - Change password");
             System.out.println("9 - Logout");
             System.out.println("10 - Exit");
+            System.out.println("11 - your user info");
             System.out.println("Your choice : ");
             int choice = inputUtils.lireInt();
             switch (choice) {
@@ -65,21 +66,29 @@ public class Main {
                 case 2: roomService.getAll();break;
                 case 3: createReservation();break;
                 case 4: reservationService.getMyReservations();break;
-                case 7 : updateProfileForm(user);break;
-                case 8 : updatePasswordForm(user);break;
-                case 9 :
+                case 5: updateReservation();break;
+                case 6: break; //
+                case 7: System.out.println(AuthService.getCurrentUser().toString());updateProfileForm(user);break;
+                case 8: updatePasswordForm(user);break;
+                case 9:
                     System.out.println("Au revoir !!");
                      authService.deconnexion(user) ;
                     continuer = false;
                     break;
+                case 10 : System.out.println("Au revoir !!");
+                    authService.deconnexion(user) ;
+                    continuer = false;
+                    return;
+                case 11 :
+                    System.out.println(AuthService.getCurrentUser().toString());break;
                 default:
                     System.out.println("choix invalide ! ");
-                    continuer = false;
             }
         }
     }
 
     // ============== For User ===============
+
     public static void registerForm(){
         System.out.println("===============================");
         String fullName = inputUtils.lireString("fullName");
@@ -138,7 +147,15 @@ public class Main {
         reservationService.createReservation(roomNumber,checkin,checkout,numberOfGuests,numberOfNights);
     }
 
+    public static void updateReservation(){
+        System.out.println("Shoose reservation number that you want to update it");
+        reservationService.getMyReservations();
+        String reservationNumber = inputUtils.lireString(" code de chambre");
+        reservationService.getReservationByNumber(reservationNumber);
+    }
+
     // =============== Principal main ================
+
     public void main(){
         mainMenu();
     }
