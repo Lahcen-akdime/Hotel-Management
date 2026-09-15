@@ -25,6 +25,8 @@ public class Reservation {
     private ReservationStatus reservationStatus ;
     private LocalDateTime cretedAt ;
 
+    static private int conteurPourCode = 1 ;
+
     public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout, int numberOfGuests, Long numberOfNights, BigDecimal totalPrice , UUID userId ) {
         this.roomNumber = roomNumber;
         this.checkin = checkin;
@@ -33,8 +35,7 @@ public class Reservation {
         this.numberOfNights = numberOfNights;
         this.totalPrice = totalPrice;
         this.userId = userId ;
-
-        this.reservationCode = "R-"+roomNumber+checkin;
+        this.reservationCode = "R-"+roomNumber+checkin+(conteurPourCode++);
         this.reservationStatus = ReservationStatus.CONFIRMED ;
         this.cretedAt = LocalDateTime.now();
     }
@@ -89,7 +90,7 @@ public class Reservation {
 
     @Override
     public String toString() {
-        StringBuilder reservationInfo = new StringBuilder("[reservation] roomNumber : "+roomNumber+" , reservation code : "+reservationCode+" , reservation Status : "+reservationStatus.toString()+" , user id : "+userId) ;
+        StringBuilder reservationInfo = new StringBuilder("[reservation] roomNumber : "+roomNumber+" , reservation code : "+reservationCode+" , reservation Status : "+reservationStatus.toString()+" , number of nights : "+numberOfNights) ;
         return reservationInfo.toString() ;
     }
 }

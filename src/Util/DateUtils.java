@@ -4,6 +4,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import Exception.InvalidReservationDateException ;
@@ -11,12 +12,13 @@ import Model.Reservation;
 
 public class DateUtils {
 
+
     public static LocalDate PerseStringToLocalDate(String inputDate){
         LocalDate localDate = LocalDate.parse(inputDate);
         return localDate ;
     }
     public static void ValidateDate(String date){
-        if (date.length() != 10){
+        if (date.trim().length() != 10){
             throw new InvalidReservationDateException("La date doit etre 10 character") ;
         }
         else if (LocalDate.parse(date).isBefore(LocalDate.now())){
@@ -36,28 +38,25 @@ public class DateUtils {
         }
     }
 
-    public static void isRoomEmptyInReservationDate(LocalDate checkin , LocalDate checkout , List<Reservation> reservations){
-        //----------------------//
-        String message = "Pardon mais la chambre et deja réserver en ce temp" ;
+    public static void isRoomEmptyInReservationDate(LocalDate checkin , LocalDate checkout , List<Reservation> reservations,Map<LocalDate,LocalDate> treeDates){
         reservations.stream().forEach(reservation -> {
             LocalDate checkenOfPreviusReservation = reservation.getCheckin() ;
             LocalDate checkoutOfPreviusReservation = reservation.getCheckout() ;
-            if(checkenOfPreviusReservation.isEqual(checkin)){
-                throw new DateTimeException(message) ;
-            } else if (checkoutOfPreviusReservation.isEqual(checkout)) {
-                throw new DateTimeException(message) ;
-            } else if (checkin.isAfter(checkenOfPreviusReservation) && checkin.isBefore(checkoutOfPreviusReservation)) {
-                throw new DateTimeException(message) ;
-            } else if (checkout.isAfter(checkenOfPreviusReservation) && checkout.isBefore(checkoutOfPreviusReservation)) {
-                throw new DateTimeException(message) ;
-            } else if (checkin.isBefore(checkenOfPreviusReservation) && checkout.isAfter(checkoutOfPreviusReservation)) {
-                throw new DateTimeException(message) ;
-            } else if (checkin.isBefore(checkenOfPreviusReservation) && checkout.isAfter(checkenOfPreviusReservation)) {
-                throw new DateTimeException(message) ;
-            } else if (checkin.isBefore(checkoutOfPreviusReservation) && checkout.isAfter(checkoutOfPreviusReservation)) {
-                throw new DateTimeException(message) ;
+            if(checkin.isBefore(checkoutOfPreviusReservation) && checkout.isAfter(checkenOfPreviusReservation)) {
+                    System.out.println("La chambre n'est pas disponible dans ces dates : ");
+                treeDates.forEach((reservedChicken, reservedChickout) -> {
+                    System.out.println("from "+reservedChicken+" to "+reservedChickout);
+                });
+                throw new DateTimeException("S'il vous entre une autre date") ;
             }
         });
     }
 
+    public static Map<LocalDate, LocalDate> treeReservationByDates(List<Reservation> reservations){
+        Map<LocalDate,LocalDate> dates = new TreeMap<>() ;
+        reservations.forEach(reservation -> {
+        dates.put(reservation.getCheckin(),reservation.getCheckout());
+        });
+        return dates ;
+    }
 }

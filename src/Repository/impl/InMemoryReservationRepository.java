@@ -41,9 +41,17 @@ public class InMemoryReservationRepository implements ReservationRepository {
         return reservations.entrySet().stream().map(r->r.getValue()).toList();
     }
 
+
+
     public List<Reservation> getConfirmedReservationsOfRoom(Room room){
         List<Reservation> reservationList = reservations.entrySet().stream().map(r -> r.getValue())
                 .filter(r -> r.getRoomNumber().equals(room.getRoomNumber()))
+                .filter(reservation -> reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)).toList();
+        return reservationList ;
+    }
+
+    public List<Reservation> getConfirmedReservations(){
+        List<Reservation> reservationList = reservations.entrySet().stream().map(r -> r.getValue())
                 .filter(reservation -> reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)).toList();
         return reservationList ;
     }

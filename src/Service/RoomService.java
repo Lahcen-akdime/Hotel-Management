@@ -1,10 +1,13 @@
 package Service;
 
+import Enums.RoomStatus;
 import Model.Room;
 import Repository.RoomRepository;
 import Repository.impl.InMemoryRoomRepository;
 
+import java.util.List;
 import java.util.Optional;
+import Exception.RoomUnavailableException ;
 
 public class RoomService {
 
@@ -37,8 +40,17 @@ public class RoomService {
     }
 
     public Optional<Room> findRoomByNumber(Integer roomNumber){
-        return inMemoryRoomRepository.findByRoomNumber(roomNumber) ;
+        Optional<Room> room = inMemoryRoomRepository.findByRoomNumber(roomNumber) ;
+        if(!room.isPresent()){
+            throw new RoomUnavailableException("this room is not exist");
+        }
+        if(!room.get().getRoomStatus().equals(RoomStatus.AVAILABLE)){
+            throw new RoomUnavailableException("this room is not availble");
+        }
+        return room ;
     }
+
+
 
 
 

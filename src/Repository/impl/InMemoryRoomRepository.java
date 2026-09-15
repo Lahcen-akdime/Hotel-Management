@@ -14,9 +14,9 @@ public class InMemoryRoomRepository implements RoomRepository {
 
     {
         rooms.put(15,
-                new Room(20, RoomType.SINGLE, 1, new BigDecimal("32"), RoomStatus.MAINTENANCE));
+                new Room(20, RoomType.SINGLE, 1, new BigDecimal("32"), RoomStatus.AVAILABLE));
         rooms.put(35,
-                new Room(40, RoomType.DOUBLE, 2, new BigDecimal("42"), RoomStatus.AVAILABLE));
+                new Room(40, RoomType.DOUBLE, 2, new BigDecimal("42"), RoomStatus.MAINTENANCE));
         rooms.put(45,
                 new Room(50, RoomType.HIGH, 3, new BigDecimal("13"), RoomStatus.AVAILABLE));
     }

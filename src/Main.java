@@ -5,6 +5,7 @@ import Model.User;
 import Service.AuthService;
 import Service.ReservationService;
 import Service.RoomService;
+import Service.UpdateReservationState;
 import Util.InputUtils;
 import Exception.InvalidCredentialsException ;
 
@@ -16,7 +17,7 @@ public class Main {
     private static RoomService roomService = new RoomService() ;
     private static ReservationService reservationService = new ReservationService() ;
     private static InputUtils inputUtils = new InputUtils() ;
-    //private static RoomInitializer roomInitializer = new RoomInitializer() ;
+    private static UpdateReservationState updateReservationState = new UpdateReservationState() ;
 
     public static void mainMenu(){
         Boolean continuer = true ;
@@ -42,11 +43,12 @@ public class Main {
     }
 
     // ================ Hotel Menu =================
-    public static void hotelManagementMenu(User user){
+
+    public static void hotelManagementMenu(){
         Boolean continuer = true ;
         while(continuer) {
             System.out.println("==========================");
-            System.out.println("== Welcome back " + user.getFullName() + " ! ");
+            System.out.println("== Welcome back " + AuthService.getCurrentUser().getFullName() + " ! ");
             System.out.println("==========================");
             System.out.println("1 - Search Availble Rooms");
             System.out.println("2 - View all rooms");
@@ -67,16 +69,16 @@ public class Main {
                 case 3: createReservation();break;
                 case 4: reservationService.getMyReservations();break;
                 case 5: updateReservation();break;
-                case 6: break; //
-                case 7: System.out.println(AuthService.getCurrentUser().toString());updateProfileForm(user);break;
-                case 8: updatePasswordForm(user);break;
+                case 6: cancelReservation();break;
+                case 7: System.out.println(AuthService.getCurrentUser().toString());updateProfileForm(AuthService.getCurrentUser());break;
+                case 8: updatePasswordForm(AuthService.getCurrentUser());break;
                 case 9:
                     System.out.println("Au revoir !!");
-                     authService.deconnexion(user) ;
+                     authService.deconnexion(AuthService.getCurrentUser()) ;
                     continuer = false;
                     break;
                 case 10 : System.out.println("Au revoir !!");
-                    authService.deconnexion(user) ;
+                    authService.deconnexion(AuthService.getCurrentUser()) ;
                     continuer = false;
                     return;
                 case 11 :
@@ -96,8 +98,8 @@ public class Main {
         String password = inputUtils.lireString("password");
         String phone = inputUtils.lireString("phone");
         try {
-        User user = authService.inscreption(email,fullName,phone,password) ;
-        hotelManagementMenu(user);
+            authService.inscreption(email,fullName,phone,password) ;
+        hotelManagementMenu();
         } catch (InvalidCredentialsException e) {
             System.out.println(e.getMessage());
         }
@@ -113,7 +115,7 @@ public class Main {
             System.out.println(e.getMessage());
             return ;
         }
-        hotelManagementMenu(AuthService.getCurrentUser());
+        hotelManagementMenu();
     }
 
     public static void updatePasswordForm(User user){
@@ -134,6 +136,7 @@ public class Main {
     }
 
     // ============== For reservations =============
+
     public static void createReservation(){
         System.out.println("====== Cree ton reservation ici ======\n");
         System.out.println("Le nombre de chambre ?");
@@ -142,9 +145,7 @@ public class Main {
         String checkout = inputUtils.lireString("date de sortie en ce format : 2026-09-09") ;
         System.out.println("Combien de guest ?");
         int numberOfGuests = inputUtils.lireInt();
-        System.out.println("Combien de nuits ?");
-        Long numberOfNights = inputUtils.lireLong() ;
-        reservationService.createReservation(roomNumber,checkin,checkout,numberOfGuests,numberOfNights);
+        reservationService.createReservation(roomNumber,checkin,checkout,numberOfGuests);
     }
 
     public static void updateReservation(){
@@ -154,9 +155,17 @@ public class Main {
         reservationService.getReservationByNumber(reservationNumber);
     }
 
+    public static void cancelReservation(){
+        System.out.println("Copy and paste the reservation code that you want to cancel it");
+        reservationService.getMyReservations();
+        String code = inputUtils.lireString("reservation code");
+        reservationService.cancelReservation(code);
+    }
+
     // =============== Principal main ================
 
     public void main(){
+
         mainMenu();
     }
 }
